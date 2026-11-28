@@ -18,8 +18,20 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      # NOTE: do NOT use android-actions/setup-android here — it runs
+      # `sdkmanager tools`, and the obsolete `tools` package no longer
+      # exists, so the step fails (run 46129521743). ubuntu-latest
+      # runners already ship a full Android SDK (ANDROID_HOME set, with
+      # cmdline-tools on PATH); install only what is missing below.
+      - name: Install Android SDK packages
+        run: |
+          # sdkmanager is NOT on PATH on ubuntu-latest; resolve it under
+          # ANDROID_HOME.
+          SDK_ROOT="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          SDKMANAGER="$(ls "$SDK_ROOT"/cmdline-tools/*/bin/sdkmanager 2>/dev/null | head -n 1)"
+          echo "Using sdkmanager: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses
+          "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
