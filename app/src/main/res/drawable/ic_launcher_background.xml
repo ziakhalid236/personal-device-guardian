@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher icon background: solid brand blue, matching Theme.PDG's
+     colorPrimary (#4F8CFF). Added 2026-11-26 with ic_launcher_foreground.xml. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#4F8CFF" />
+</shape>

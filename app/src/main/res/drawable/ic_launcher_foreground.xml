@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher icon foreground: white shield with a checkmark, on the blue
+     background from ic_launcher_background.xml. Added 2026-11-26: the
+     manifest referenced @mipmap/ic_launcher but no icon resources existed,
+     so aapt2 linking (local Gradle and GitHub Actions) would fail. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,14 L86,26 V54 C86,76 72,92 54,98 C36,92 22,76 22,54 V26 Z" />
+    <path
+        android:fillColor="#4F8CFF"
+        android:pathData="M44,54 L52,62 L66,46 L70,50 L52,68 L40,58 Z" />
+</vector>
