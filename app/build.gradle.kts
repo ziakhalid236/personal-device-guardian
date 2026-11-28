@@ -20,7 +20,7 @@ android {
     // so without this, each rebuild has a different signature and cannot
     // install over the previous APK. With it, v1.0.1+ updates install cleanly.
     signingConfigs {
-        create("debug") {
+        getByName("debug") {
             storeFile = file("debug.keystore")
             storePassword = "android"
             keyAlias = "androiddebugkey"
