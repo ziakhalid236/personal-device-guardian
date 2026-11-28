@@ -40,7 +40,21 @@ class GuardianService : Service() {
         prefs = Prefs(this)
         api = ApiClient(prefs)
         createChannel()
-        startForeground(NOTIF_ID, buildNotification("Device Guardian active"))
+        val notification = buildNotification("Device Guardian active")
+        // Declare the service types at start so the system lets this service
+        // open the camera/mic while the app is in the background (needed for
+        // request_photo / request_audio). The 3-arg startForeground exists
+        // since API 29; the camera/mic types since API 30.
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            startForeground(
+                NOTIF_ID, notification,
+                android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+                    or android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA
+                    or android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE
+            )
+        } else {
+            startForeground(NOTIF_ID, notification)
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

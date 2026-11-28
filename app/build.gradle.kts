@@ -11,8 +11,21 @@ android {
         applicationId = "com.zia.pdg"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "1.0.1"
+    }
+
+    // Stable debug keystore committed as app/debug.keystore (standard debug
+    // credentials). CI runners generate a fresh debug keystore on every run,
+    // so without this, each rebuild has a different signature and cannot
+    // install over the previous APK. With it, v1.0.1+ updates install cleanly.
+    signingConfigs {
+        create("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
     }
 
     buildTypes {
@@ -21,6 +34,7 @@ android {
         }
         debug {
             applicationIdSuffix = ".debug"
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 

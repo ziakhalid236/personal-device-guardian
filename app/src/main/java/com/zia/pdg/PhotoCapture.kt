@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
 import java.io.File
 import kotlin.coroutines.resume
 
@@ -20,13 +21,25 @@ import kotlin.coroutines.resume
  */
 object PhotoCapture {
     suspend fun takePhoto(context: Context): ByteArray? {
+        // A stuck camera must never block the service loop forever: if the
+        // capture does not finish in 30s, give up so the command acks
+        // "failed" and heartbeats keep flowing.
+        return withTimeoutOrNull(30_000) { takePhotoOnce(context) }
+    }
+
+    private suspend fun takePhotoOnce(context: Context): ByteArray? {
         val output = File(context.cacheDir, "photo_${System.currentTimeMillis()}.jpg")
+        var cameraProvider: ProcessCameraProvider? = null
         return suspendCancellableCoroutine { cont ->
+            cont.invokeOnCancellation {
+                try { cameraProvider?.unbindAll() } catch (e: Exception) { }
+            }
             try {
                 val providerFuture = ProcessCameraProvider.getInstance(context)
                 providerFuture.addListener({
                     try {
                         val provider = providerFuture.get()
+                        cameraProvider = provider
                         val owner = ServiceLifecycleOwner()
                         owner.start()
                         val capture = ImageCapture.Builder()
